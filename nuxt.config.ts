@@ -7,6 +7,7 @@ import SharedModule from './modules/shared/index'
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
+  devServer: { host: 'online-fish.local', port: 3000 },
   alias: {
     '@shared': './modules/shared',
     '@auth': './modules/auth'
@@ -20,10 +21,17 @@ export default defineNuxtConfig({
     'nuxt-lucide-icons',
     '@nuxt/eslint',
     '@vueuse/nuxt',
+    'proxima-vue/nuxt',
     AuthModule,
     MainModule,
     SharedModule
   ],
+  proxima: {
+    injectStyles: false,
+    injectComponents: true,
+    injectComposables: true
+    // other options
+  },
   css: ['~/modules/shared/assets/css/main.css'],
   vite: {
     plugins: [tailwindcss()]

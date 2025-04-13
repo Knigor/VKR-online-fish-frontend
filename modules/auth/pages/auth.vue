@@ -11,21 +11,21 @@
       <p class="mt-4 text-center text-base text-gray-600">
         Добро пожаловать, введите ваш Email
       </p>
-      <form @submit.prevent="handleSubmit" class="mt-4 space-y-4">
+      <form class="mt-4 space-y-4" @submit.prevent="handleSubmit">
         <div>
           <label id="email" class="label">
             <span class="label-text text-base">Почта</span>
           </label>
           <input
             id="email"
-            v-model="form.email"
+            v-model="email"
             type="email"
             placeholder="Введите почту"
             class="input input-bordered input-primary mt-1 w-full border"
-            :class="{ 'border-red-500': errors.email }"
+            :class="{ 'border-red-500': emailError }"
           />
-          <span v-if="errors.email" class="text-xs text-red-500">
-            {{ errors.email }}
+          <span v-if="emailError" class="text-xs text-red-500">
+            {{ emailError }}
           </span>
         </div>
         <div>
@@ -34,31 +34,34 @@
           </label>
           <input
             id="password"
-            v-model="form.password"
+            v-model="password"
             type="password"
             placeholder="Введите пароль"
             class="input input-bordered input-primary mt-1 w-full border"
-            :class="{ 'border-red-500': errors.password }"
+            :class="{ 'border-red-500': passwordError }"
           />
-          <span v-if="errors.password" class="text-xs text-red-500">
-            {{ errors.password }}
+          <span v-if="passwordError" class="text-xs text-red-500">
+            {{ passwordError }}
           </span>
         </div>
 
         <div class="relative">
+          <span v-if="authError" class="text-xs text-red-500">{{
+            authError
+          }}</span>
           <button
             :class="{ 'opacity-50': loading }"
             class="btn btn-primary btn-block mt-4"
             type="submit"
+            :disabled="isFormSubmitDisabled"
           >
             Войти
           </button>
-          <transition name="fade">
-            <progress
-              v-if="loading"
-              class="progress absolute inset-0 bottom-2 text-blue-600 transition-all duration-300"
-            ></progress>
-          </transition>
+
+          <progress
+            v-if="loading"
+            class="progress absolute inset-0 bottom-2 text-blue-600 transition-all duration-300"
+          ></progress>
         </div>
 
         <div>
@@ -76,62 +79,68 @@
 </template>
 
 <script setup lang="ts">
-import { object, string } from 'yup'
-import type { ValidationError } from 'yup'
+import { object, string, ValidationError } from 'yup'
+import { useAuth } from '../composables/useAuth'
 
-interface ErrorsLogin {
-  email: string
-  password: string
-}
+const { onLogin } = useAuth()
 
 const loading = ref(false)
+const email = ref('')
+const password = ref('')
 
-const schema = object({
-  email: string()
-    .email('Введите корректный email')
-    .required('Email обязателен для заполнения'),
-  password: string()
-    .min(6, 'Пароль должен быть не менее 6 символов')
-    .required('Пароль обязателен для заполнения')
+const emailError = ref('')
+const passwordError = ref('')
+const authError = ref('')
+
+const isFormSubmitDisabled = computed(() => {
+  return !email.value.trim() || !password.value.trim()
 })
 
-const form = ref({
-  email: '',
-  password: ''
-})
+const resetErrors = () => {
+  emailError.value = ''
+  passwordError.value = ''
+  authError.value = ''
+}
 
-const errors = ref<ErrorsLogin>({
-  email: '',
-  password: ''
-})
+const checkValid = async () => {
+  const loginSchema = object({
+    email: string()
+      .email('Введите корректный email')
+      .required('Email обязателен для заполнения'),
+    password: string()
+      .min(6, 'Пароль должен быть не менее 6 символов')
+      .required('Пароль обязателен для заполнения')
+  })
 
-const clearErrors = () => {
-  errors.value = {
-    email: '',
-    password: ''
+  try {
+    await loginSchema.validate({ email: email.value, password: password.value })
+    return true
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      if (err.path === 'email') emailError.value = err.message
+      if (err.path === 'password') passwordError.value = err.message
+    }
+    return false
   }
 }
 
 const handleSubmit = async () => {
-  clearErrors()
+  const isValid = await checkValid()
+  if (!isValid) return
+  authError.value = ''
+  resetErrors()
+
   loading.value = true
-
   try {
-    await schema.validate(form.value, { abortEarly: false })
-
-    navigateTo('/')
-  } catch (error) {
-    const validationError = error as ValidationError
-    if (validationError.inner) {
-      validationError.inner.forEach((err) => {
-        if (
-          err.path &&
-          errors.value[err.path as keyof ErrorsLogin] !== undefined
-        ) {
-          errors.value[err.path as keyof ErrorsLogin] = err.message
-        }
-      })
+    const response = await onLogin(email.value, password.value)
+    console.log('Вызывается авторизация')
+    if (response.success) {
+      navigateTo('/')
+    } else {
+      authError.value = 'Введен не правильный логин или пароль'
     }
+  } catch (error) {
+    console.log('Ошибка отправки формы', error)
   } finally {
     loading.value = false
   }
@@ -139,7 +148,6 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-/* Добавьте стили для ошибок если нужно */
 .border-red-500 {
   border-color: #ef4444;
 }

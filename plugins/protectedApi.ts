@@ -1,7 +1,10 @@
+import { useAuthStore } from '~/modules/auth/store/authStore'
+
 import type { NitroFetchOptions, NitroFetchRequest } from 'nitropack'
 
 export default defineNuxtPlugin(() => {
   type ApiRequestOptions = NitroFetchOptions<NitroFetchRequest>
+  const authStore = useAuthStore()
 
   const request = $fetch.create({
     responseType: 'json',
@@ -10,13 +13,12 @@ export default defineNuxtPlugin(() => {
     baseURL: `${useRuntimeConfig().public.apiBase}`,
 
     async onRequest({ request, options }) {
-      // Добавляем токен в заголовки, если он есть
-      // if (authStore.accessToken) {
-      //   options.headers = {
-      //     ...options.headers,
-      //     Authorization: `Bearer ${authStore.accessToken}`
-      //   }
-      // }
+      if (authStore.accessToken) {
+        options.headers = {
+          ...options.headers,
+          Authorization: `Bearer ${authStore.accessToken}`
+        }
+      }
     },
 
     async onResponse({ request, options, response }) {
