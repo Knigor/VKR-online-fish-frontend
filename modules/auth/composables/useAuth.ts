@@ -53,5 +53,16 @@ export const useAuth = () => {
     }
   }
 
-  return { onLogin, onRefreshToken, onRegister }
+  const logOut = async () => {
+    try {
+      await $publicApi('logout', { method: 'GET' })
+      authStore.LogOut()
+
+      return { success: true }
+    } catch (error) {
+      return { success: false, error }
+    }
+  }
+
+  return { onLogin, onRefreshToken, onRegister, logOut }
 }
