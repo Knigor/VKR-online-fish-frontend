@@ -60,16 +60,16 @@
       <div
         v-for="card in cards"
         :key="card.id"
-        class="card w-full border-1 border-blue-600 shadow-sm"
+        class="card w-full border-blue-600 shadow-sm"
       >
-        <figure class="px-10 py-10">
+        <figure class="">
           <img
             src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
             alt="Shoes"
-            class="rounded-xl"
+            class="rounded-xl rounded-b-none"
           />
         </figure>
-        <div class="card-body">
+        <div class="card-body rounded-t-none">
           <h2 class="card-title">
             {{ card.name }}
             <div class="badge badge-secondary p-2">
