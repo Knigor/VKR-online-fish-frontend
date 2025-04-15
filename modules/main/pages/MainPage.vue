@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-const selectedCategory = ref('Все') // "" — означает "Все"
+const selectedCategory = ref('Все')
 
 const cards = ref([
   {

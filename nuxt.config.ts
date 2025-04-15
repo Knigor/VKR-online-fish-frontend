@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@vueuse/nuxt',
     'proxima-vue/nuxt',
+    'vue-sonner/nuxt',
     AuthModule,
     MainModule,
     SharedModule

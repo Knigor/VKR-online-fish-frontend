@@ -42,9 +42,8 @@
           <ProximaPhone
             v-model="phone"
             format="+7 (***) ***-**-**"
-            round="soft"
-            has-clear-button
-            class="mt-1 w-full border border-blue-600 hover:border-blue-600 active:outline-2 active:outline-offset-2 active:outline-blue-500"
+            class="custom-input mt-2 border border-purple-700"
+            type="phone"
           />
           <span v-if="phoneErrors" class="text-xs text-red-500">
             {{ phoneErrors }}

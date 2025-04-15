@@ -14,6 +14,11 @@ export default defineNuxtModule({
         path: '/',
         file: path.resolve(__dirname, 'pages/MainPage.vue')
       })
+      pages.push({
+        name: 'product',
+        path: '/product/:id',
+        file: path.resolve(__dirname, 'pages/ProductPage.vue')
+      })
     })
   }
 })

@@ -11,11 +11,54 @@
     <div class="mr-4 flex flex-wrap items-end gap-4">
       <!-- Поиск  -->
       <div class="flex gap-2">
-        <input
-          id="search"
-          placeholder="Поиск..."
-          class="input input-bordered input-primary mt-1 w-full border"
-        />
+        <div class="">
+          <div
+            class="relative inline-flex flex-col justify-center text-gray-500"
+          >
+            <input
+              id="search"
+              v-model="search"
+              type="search"
+              placeholder="Поиск..."
+              class="input input-bordered mt-1 w-full border border-purple-700"
+              @input="handleSearch(search)"
+              @focus="isFocused = true"
+              @blur="handleFocused"
+            />
+            <Transition name="fade">
+              <ul
+                v-if="isFocused"
+                class="absolute top-10 z-10 mt-2 h-44 w-full overflow-auto rounded-b-md border border-purple-700 bg-white pb-1"
+              >
+                <!-- Карточки товаров -->
+                <div v-if="products?.length > 0">
+                  <li
+                    v-for="product in products"
+                    :key="product.id"
+                    class="relative cursor-pointer border-b-2 border-gray-100 px-2 py-1 hover:bg-blue-100 hover:text-gray-900"
+                  >
+                    <div
+                      class="flex gap-1"
+                      @click="navigateTo(`/product/${product.id}`)"
+                    >
+                      <Fish />
+                      <span>{{ product.nameProduct }}</span>
+                    </div>
+                  </li>
+                </div>
+
+                <!-- Ничего не найдено -->
+                <div
+                  v-else
+                  class="absolute top-14 left-10 flex flex-col items-center justify-center"
+                >
+                  <Frown :size="40" />
+                  <p class="text-gray-600">Ничего не найдено</p>
+                </div>
+              </ul>
+            </Transition>
+          </div>
+        </div>
       </div>
       <!-- Иконки -->
       <div class="dropdown dropdown-end flex gap-2">
@@ -72,12 +115,75 @@
 </template>
 
 <script setup lang="ts">
-import { LogOut, ShoppingCart, ShieldUser } from 'lucide-vue-next'
+import { LogOut, ShoppingCart, ShieldUser, Frown, Fish } from 'lucide-vue-next'
 import CartModal from './CartModal.vue'
+import { useSearchHeader } from '../composables/useSearchHeader'
 
+interface Product {
+  id: number
+  nameProduct: string
+  descriptionProduct: string
+  imageUrlProduct: string
+  priceProduct: number
+  productWeight: string
+  quantityProduct: number
+  typeProducts: string
+}
+
+const search = ref<string>('')
 const isOpen = defineModel<boolean>('isOpen')
 const userRole = defineModel<string>('userRole')
 defineEmits(['logOut', 'openCart'])
+
+const { searchProducts } = useSearchHeader()
+const isLoading = ref(false)
+const isFocused = ref(false)
+
+const handleFocused = () => {
+  return setTimeout(() => {
+    isFocused.value = false
+  }, 200)
+}
+
+const products = ref<Product[]>([])
+
+const timeoutId = ref<number | null>(null)
+
+const handleSearch = async (search: string) => {
+  isLoading.value = true
+
+  if (search === '') {
+    products.value = []
+    isLoading.value = false
+    return
+  }
+
+  if (timeoutId.value) {
+    clearTimeout(timeoutId.value)
+  }
+
+  try {
+    timeoutId.value = setTimeout(async () => {
+      const response = await searchProducts(search)
+      console.log(response)
+      products.value = response
+      isLoading.value = false
+    }, 500) as unknown as number
+  } catch (error) {
+    console.log(error)
+    isLoading.value = false
+  }
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

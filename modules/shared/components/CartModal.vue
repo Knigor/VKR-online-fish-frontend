@@ -57,27 +57,7 @@
                       <div class="mt-1">Живые устрицы товар 1</div>
                     </div>
 
-                    <div class="flex items-center gap-1">
-                      <button
-                        class="btn btn-square btn-ghost"
-                        @click="handleMinus"
-                      >
-                        <Minus stroke-width="1" />
-                      </button>
-
-                      <input
-                        v-model="quantity"
-                        class="input input-neutral flex h-8 w-8 items-center justify-center p-1"
-                        @input="handleInput"
-                      />
-
-                      <button
-                        class="btn btn-square btn-ghost"
-                        @click="handlePlus"
-                      >
-                        <Plus stroke-width="1" />
-                      </button>
-                    </div>
+                    <ControllButtons />
                     <p class="inline-block w-24 text-end text-gray-600">
                       {{ new Intl.NumberFormat('ru-RU').format(priceProduct) }}
                       р.
@@ -146,32 +126,14 @@ import {
   DialogTitle
 } from '@headlessui/vue'
 import { useAuthStore } from '~/modules/auth/store/authStore'
-import { X, Minus, Plus } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
+import ControllButtons from './ControllButtons.vue'
+import { useControllButtons } from '../composables/useControlButtons'
 
+const { priceProduct } = useControllButtons()
 const authStore = useAuthStore()
 const isOpen = defineModel<boolean>('isOpen')
 function closeModal() {
   isOpen.value = false
-}
-
-const quantity = ref(1)
-const priceProduct = ref(5160)
-
-const handlePlus = () => {
-  if (quantity.value < 99) {
-    quantity.value++
-    priceProduct.value = quantity.value * 5160
-  }
-}
-const handleMinus = () => {
-  if (quantity.value > 1) {
-    quantity.value--
-    priceProduct.value = quantity.value * 5160
-  }
-}
-
-const handleInput = () => {
-  quantity.value = Math.min(99, Math.max(1, quantity.value))
-  priceProduct.value = quantity.value * 5160
 }
 </script>
