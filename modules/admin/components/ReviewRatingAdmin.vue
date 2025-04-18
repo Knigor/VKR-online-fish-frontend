@@ -1,5 +1,5 @@
 <template>
-  <article class="max-w-[900px]">
+  <article class="mr-4 max-w-[900px]">
     <div class="mb-4 flex items-center">
       <div class="flex items-center gap-4">
         <div class="avatar">
@@ -47,13 +47,16 @@
       This is my third Invicta Pro Diver. They are just fantastic value for
       money. This one arrived yesterday and the first thing I did was set the
       time, popped on an identical strap from another Invicta and went in the
-      shower with it to test the waterproofing.... No problems.
+      shower with it to test the waterproofing.... No problems. This is my third
+      Invicta Pro Diver. They are just fantastic value for money. This one
+      arrived yesterday and the first thing I did was set the time, popped on an
+      identical strap from another Invicta and went in the shower with it to
+      test the waterproofing.... No problems.
     </p>
-    <a
-      href="#"
-      class="mb-5 block text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-      >Read more</a
-    >
+    <div class="flex justify-end gap-4">
+      <button class="btn btn-success">Одобрить</button>
+      <button class="btn btn-error">Удалить</button>
+    </div>
     <aside></aside>
   </article>
 </template>

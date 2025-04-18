@@ -36,7 +36,12 @@
       <p class="link link-accent underline-offset-4" @click="openAddedModal">
         Добавить
       </p>
-      <p class="link link-primary underline-offset-4">Отзывы</p>
+      <p
+        class="link link-primary underline-offset-4"
+        @click="navigateTo('/admin-reviews')"
+      >
+        Отзывы
+      </p>
     </div>
 
     <!-- Карточки товара -->
