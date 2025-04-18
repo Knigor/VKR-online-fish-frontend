@@ -85,7 +85,11 @@
           class="tooltip tooltip-primary hover:tooltip-open tooltip-bottom"
           data-tip="Админка"
         >
-          <div role="button" class="btn btn-ghost btn-circle">
+          <div
+            role="button"
+            class="btn btn-ghost btn-circle"
+            @click="navigateTo('/admin-main')"
+          >
             <div class="indicator">
               <ShieldUser />
             </div>

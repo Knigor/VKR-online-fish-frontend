@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import AuthModule from './modules/auth/index'
 import MainModule from './modules/main/index'
 import SharedModule from './modules/shared/index'
+import AdminMain from './modules/admin/index'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -24,6 +25,7 @@ export default defineNuxtConfig({
     'proxima-vue/nuxt',
     'vue-sonner/nuxt',
     AuthModule,
+    AdminMain,
     MainModule,
     SharedModule
   ],

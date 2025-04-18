@@ -10,6 +10,8 @@
           <h1 class="text-2xl font-bold">Печень трески (ст/б, 500гр)</h1>
           <p>800 руб</p>
 
+          <p>Цена за <span class="text-gray-600"> 50 г</span></p>
+
           <div class="flex gap-2 py-2">
             <ControllButtons />
             <button
