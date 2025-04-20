@@ -10,7 +10,6 @@ export const useProducts = () => {
       return response
     } catch (error) {
       console.error('Ошибка при получении продуктов:', error)
-      return []
     }
   }
 

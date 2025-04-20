@@ -14,3 +14,19 @@ export interface Product {
   typeProducts: string
   categoryId: number
 }
+
+export interface Review {
+  id: number
+  product_id: number
+  product_name: string
+  user: {
+    id: number
+    name: string
+    email: string
+  }
+  rating: number
+  text: string
+  created_at: string
+  is_moderate: boolean
+  moderation_status: string
+}

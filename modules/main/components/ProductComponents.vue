@@ -2,15 +2,20 @@
   <div class="hero bg-base max-w-[900px]">
     <div class="hero-content flex-col gap-12 lg:flex-row">
       <img
-        src="https://optim.tildacdn.com/tild3131-3863-4939-b633-623232613761/-/format/webp/4_3_8.jpg"
+        :src="product.imageUrlProduct"
         class="max-w-sm rounded-lg shadow-2xl"
       />
       <div>
         <div class="flex flex-col gap-2">
-          <h1 class="text-2xl font-bold">Печень трески (ст/б, 500гр)</h1>
-          <p>800 руб</p>
+          <h1 class="text-2xl font-bold">{{ product.nameProduct }}</h1>
+          <div class="badge badge-secondary p-2">
+            {{ new Intl.NumberFormat('ru-RU').format(product.priceProduct) }}р
+          </div>
 
-          <p>Цена за <span class="text-gray-600"> 50 г</span></p>
+          <p>
+            Цена за
+            <span class="text-gray-600">{{ product.productWeight }}</span>
+          </p>
 
           <div class="flex gap-2 py-2">
             <ControllButtons />
@@ -33,14 +38,9 @@
             @close-modal="isOpen = false"
           />
 
-          <p>Тип: Замороженная</p>
+          <p>Тип: {{ product.typeProducts }}</p>
           <p class="py-6 text-gray-600">
-            О пользе печени трески для здоровья известно с древнейших времён.
-            Еще не зная о том, что такое витамины, врачи рекомендовали её
-            пациентам с ослабленным зрением, больным ревматизмом и артрозами, а
-            также для укрепления иммунитета. Продукт самого высшего качества с
-            огромным количеством рыбьего жира, витаминов и микроэлементов,
-            которые хорошо усваиваются организмом.
+            {{ product.descriptionProduct }}
           </p>
         </div>
       </div>
@@ -51,6 +51,12 @@
 <script setup lang="ts">
 import ControllButtons from '~/modules/shared/components/ControllButtons.vue'
 import ReviewProduct from './ReviewProduct.vue'
+import type { Product } from '~/modules/shared/types/type'
+
+defineProps<{
+  product: Product
+}>()
+
 const { $toast } = useNuxtApp()
 const isOpen = ref(false)
 

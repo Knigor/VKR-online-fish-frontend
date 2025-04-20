@@ -1,6 +1,6 @@
 <template>
-  <article class="max-w-[900px]">
-    <div class="mb-4 flex items-center">
+  <article class="mt-4 max-w-[900px]">
+    <div class="mb-4 flex items-start">
       <div class="flex items-center gap-4">
         <div class="avatar">
           <div class="w-24 rounded-full">
@@ -11,10 +11,10 @@
         </div>
         <div class="font-medium dark:text-white">
           <p>
-            Кретов Игорь Олегович
-            <span class="block text-sm text-gray-500 dark:text-gray-400"
-              >knigor1337@gmail.ru</span
-            >
+            {{ review.user.name }}
+            <span class="block text-sm text-gray-500 dark:text-gray-400">{{
+              review.user.email
+            }}</span>
           </p>
         </div>
       </div>
@@ -44,30 +44,25 @@
       </p>
     </footer>
     <p class="mb-2 text-gray-500 dark:text-gray-400">
-      This is my third Invicta Pro Diver. They are just fantastic value for
-      money. This one arrived yesterday and the first thing I did was set the
-      time, popped on an identical strap from another Invicta and went in the
-      shower with it to test the waterproofing.... No problems.
+      {{ review.text }}
     </p>
-    <a
-      href="#"
-      class="mb-5 block text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-      >Read more</a
-    >
+    <hr />
     <aside></aside>
   </article>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import type { Review } from '~/modules/shared/types/type'
+
+const props = defineProps<{
   rating: number
+  review: Review
 }>()
 
 const uniqId = ref(Math.random())
-const created_at = ref('2025-04-10 15:43:26')
 
 const formatedDate = computed(() => {
-  const date = new Date(created_at.value)
+  const date = new Date(props.review.created_at)
   return date.toLocaleDateString('ru-RU', {
     year: 'numeric',
     month: 'long',

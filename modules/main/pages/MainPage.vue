@@ -96,9 +96,10 @@
 
           <button
             class="btn btn-primary"
+            :disabled="card.quantityProduct === 0"
             @click="navigateTo({ name: 'product', params: { id: card.id } })"
           >
-            Подробнее
+            {{ card.quantityProduct === 0 ? 'Нет в наличии' : 'Подробнее' }}
           </button>
         </div>
       </div>
