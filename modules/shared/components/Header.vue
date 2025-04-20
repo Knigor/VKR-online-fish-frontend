@@ -79,6 +79,24 @@
           </div>
         </div>
 
+        <!-- Иконка заказов -->
+
+        <div
+          v-if="userRole === 'ROLE_ADMIN'"
+          class="tooltip tooltip-primary hover:tooltip-open tooltip-bottom"
+          data-tip="Заказы"
+        >
+          <div
+            role="button"
+            class="btn btn-ghost btn-circle"
+            @click="navigateTo('/admin-orders')"
+          >
+            <div class="indicator">
+              <ArrowRightLeft />
+            </div>
+          </div>
+        </div>
+
         <!-- Иконка админа -->
         <div
           v-if="userRole === 'ROLE_ADMIN'"
@@ -119,7 +137,14 @@
 </template>
 
 <script setup lang="ts">
-import { LogOut, ShoppingCart, ShieldUser, Frown, Fish } from 'lucide-vue-next'
+import {
+  LogOut,
+  ShoppingCart,
+  ShieldUser,
+  Frown,
+  Fish,
+  ArrowRightLeft
+} from 'lucide-vue-next'
 import CartModal from './CartModal.vue'
 import { useSearchHeader } from '../composables/useSearchHeader'
 

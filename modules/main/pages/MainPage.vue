@@ -29,7 +29,7 @@
         v-for="category in categories"
         :key="category"
         class="btn"
-        :class="{ 'bg-blue-600 text-white': selectedCategory === category }"
+        :class="{ 'btn-primary text-white': selectedCategory === category }"
         @click="selectedCategory = category"
       >
         {{ category }}

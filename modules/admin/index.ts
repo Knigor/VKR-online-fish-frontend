@@ -19,6 +19,11 @@ export default defineNuxtModule({
         path: '/admin-reviews',
         file: path.resolve(__dirname, 'pages/AdminReview.vue')
       })
+      pages.push({
+        name: 'admin-orders',
+        path: '/admin-orders',
+        file: path.resolve(__dirname, 'pages/AdminOrders.vue')
+      })
     })
 
     // Components

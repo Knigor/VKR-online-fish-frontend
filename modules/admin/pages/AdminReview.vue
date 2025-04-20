@@ -1,19 +1,5 @@
 <template>
   <div class="flex flex-col items-center justify-center gap-12 pt-8 pb-8">
-    <!-- Фильтры по категориям -->
-
-    <!-- <div class="flex max-w-[900px] grid-cols-2 flex-wrap gap-2 filter">
-        <button
-          v-for="category in categories"
-          :key="category"
-          class="btn"
-          :class="{ 'bg-blue-600 text-white': selectedCategory === category }"
-          @click="selectedCategory = category"
-        >
-          {{ category }}
-        </button>
-      </div> -->
-
     <!-- Поиск -->
     <div class="mr-4 flex w-full max-w-[900px] justify-end gap-2">
       <div class="join">

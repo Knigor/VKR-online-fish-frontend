@@ -20,8 +20,18 @@
             >
               Добавить в корзину
             </button>
+            <button class="btn btn-info" @click="handleOpenReview">
+              Оставить отзыв
+            </button>
           </div>
           <Toaster theme="dark" position="bottom-right" />
+
+          <!-- Модалка на добавление отзыва -->
+          <ReviewProduct
+            :is-open="isOpen"
+            @added-review="handleAddedReview"
+            @close-modal="isOpen = false"
+          />
 
           <p>Тип: Замороженная</p>
           <p class="py-6 text-gray-600">
@@ -40,7 +50,18 @@
 
 <script setup lang="ts">
 import ControllButtons from '~/modules/shared/components/ControllButtons.vue'
+import ReviewProduct from './ReviewProduct.vue'
 const { $toast } = useNuxtApp()
+const isOpen = ref(false)
+
+const handleAddedReview = () => {
+  $toast.success('Отзыв отправлен на модерацию')
+  isOpen.value = false
+}
+
+const handleOpenReview = () => {
+  isOpen.value = true
+}
 </script>
 
 <style scoped>
