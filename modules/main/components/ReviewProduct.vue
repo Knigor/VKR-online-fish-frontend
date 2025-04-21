@@ -46,32 +46,37 @@
                 <p class="text-sm text-gray-900">Оцените товар</p>
                 <div class="rating mt-2">
                   <input
+                    v-model="rating"
+                    value="1"
                     type="radio"
-                    name="rating-2"
                     class="mask mask-star-2 bg-orange-400"
                     aria-label="1 star"
                   />
                   <input
+                    v-model="rating"
+                    value="2"
                     type="radio"
-                    name="rating-2"
                     class="mask mask-star-2 bg-orange-400"
                     aria-label="2 star"
                   />
                   <input
+                    v-model="rating"
+                    value="3"
                     type="radio"
-                    name="rating-2"
                     class="mask mask-star-2 bg-orange-400"
                     aria-label="3 star"
                   />
                   <input
+                    v-model="rating"
+                    value="4"
                     type="radio"
-                    name="rating-2"
                     class="mask mask-star-2 bg-orange-400"
                     aria-label="4 star"
                   />
                   <input
+                    v-model="rating"
+                    value="5"
                     type="radio"
-                    name="rating-2"
                     class="mask mask-star-2 bg-orange-400"
                     aria-label="5 star"
                   />
@@ -81,6 +86,7 @@
               <div class="mt-4">
                 <p class="text-sm text-gray-900">Оцените товар</p>
                 <textarea
+                  v-model="text"
                   type="text"
                   placeholder="Введите то что вы думаете"
                   class="textarea textarea-primary mt-2 max-h-[200px] border"
@@ -113,17 +119,20 @@ import {
 } from '@headlessui/vue'
 import { X } from 'lucide-vue-next'
 
+const rating = ref(0)
+const text = ref('')
+
 defineProps<{
   isOpen: boolean
 }>()
 
 const emit = defineEmits<{
-  closeModal: []
-  addedReview: []
+  (e: 'closeModal'): void
+  (e: 'addedReview', rating: number, text: string): void
 }>()
 
 function addedReview() {
-  emit('addedReview')
+  emit('addedReview', rating.value, text.value)
 }
 
 function closeModal() {

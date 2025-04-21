@@ -52,17 +52,34 @@
 import ControllButtons from '~/modules/shared/components/ControllButtons.vue'
 import ReviewProduct from './ReviewProduct.vue'
 import type { Product } from '~/modules/shared/types/type'
+import { useReviews } from '~/modules/shared/composables/useReviews'
+import { useAuthStore } from '~/modules/auth/store/authStore'
 
 defineProps<{
   product: Product
 }>()
 
 const { $toast } = useNuxtApp()
+const { addedReview } = useReviews()
 const isOpen = ref(false)
+const route = useRoute()
+const authStore = useAuthStore()
 
-const handleAddedReview = () => {
-  $toast.success('Отзыв отправлен на модерацию')
-  isOpen.value = false
+const handleAddedReview = async (rating: number, text: string) => {
+  try {
+    if (authStore.user)
+      await addedReview(
+        Number(route.params.id),
+        authStore.user.id,
+        rating,
+        text
+      )
+    $toast.success(`Отзыв отправлен на модерацию`)
+    isOpen.value = false
+  } catch (error) {
+    console.error('Ошибка отправки отзыва', error)
+    $toast.error(`В поле оставьте отзыв должно быть минимум 10 символов`)
+  }
 }
 
 const handleOpenReview = () => {

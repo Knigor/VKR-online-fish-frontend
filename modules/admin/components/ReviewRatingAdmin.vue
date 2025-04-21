@@ -11,10 +11,10 @@
         </div>
         <div class="font-medium dark:text-white">
           <p>
-            Кретов Игорь Олегович
-            <span class="block text-sm text-gray-500 dark:text-gray-400"
-              >knigor1337@gmail.ru</span
-            >
+            {{ review.user.name }}
+            <span class="block text-sm text-gray-500 dark:text-gray-400">{{
+              review.user.email
+            }}</span>
           </p>
         </div>
       </div>
@@ -44,33 +44,41 @@
       </p>
     </footer>
     <p class="mb-2 text-gray-500 dark:text-gray-400">
-      This is my third Invicta Pro Diver. They are just fantastic value for
-      money. This one arrived yesterday and the first thing I did was set the
-      time, popped on an identical strap from another Invicta and went in the
-      shower with it to test the waterproofing.... No problems. This is my third
-      Invicta Pro Diver. They are just fantastic value for money. This one
-      arrived yesterday and the first thing I did was set the time, popped on an
-      identical strap from another Invicta and went in the shower with it to
-      test the waterproofing.... No problems.
+      {{ review.text }}
     </p>
     <div class="flex justify-end gap-4">
-      <button class="btn btn-success">Одобрить</button>
-      <button class="btn btn-error">Удалить</button>
+      <button
+        v-if="review.is_moderate === false"
+        class="btn btn-success"
+        @click="emit('success-review', review.id, true)"
+      >
+        Одобрить
+      </button>
+      <button class="btn btn-error" @click="emit('delete-review', review.id)">
+        Удалить
+      </button>
     </div>
     <aside></aside>
   </article>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import type { Review } from '~/modules/shared/types/type'
+
+const props = defineProps<{
   rating: number
+  review: Review
+}>()
+
+const emit = defineEmits<{
+  (e: 'success-review', id: number, status: boolean): void
+  (e: 'delete-review', id: number): void
 }>()
 
 const uniqId = ref(Math.random())
-const created_at = ref('2025-04-10 15:43:26')
 
 const formatedDate = computed(() => {
-  const date = new Date(created_at.value)
+  const date = new Date(props.review.created_at)
   return date.toLocaleDateString('ru-RU', {
     year: 'numeric',
     month: 'long',

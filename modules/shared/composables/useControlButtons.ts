@@ -19,5 +19,11 @@ export const useControllButtons = () => {
     priceProduct.value = quantity.value * 5160
   }
 
-  return { handlePlus, handleMinus, handleInput, quantity, priceProduct }
+  return {
+    handlePlus,
+    handleMinus,
+    handleInput,
+    quantity,
+    priceProduct
+  }
 }
