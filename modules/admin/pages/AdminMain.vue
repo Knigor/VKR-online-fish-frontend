@@ -11,7 +11,6 @@
           type="search"
           placeholder="Поиск"
         />
-        <button class="btn join-item btn-xs rounded-r-full">Найти</button>
       </div>
 
       <select
@@ -68,11 +67,17 @@
             <button class="btn btn-secondary" @click="openDeleteModal(card)">
               Удалить
             </button>
+
             <button
               class="btn btn-warning max-w-[130px]"
+              :disabled="loadingStates[card.id]"
               @click="openUpdateModal(card)"
             >
-              Редактировать
+              <span
+                v-if="loadingStates[card.id]"
+                class="loading text-primary loading-spinner"
+              ></span>
+              <span v-else>Редактировать</span>
             </button>
           </div>
         </div>
@@ -83,9 +88,11 @@
       <!-- Модалка на редактирование -->
       <UpdateModal
         v-if="currentCardName"
-        :card-product="currentCardName"
+        :product="currentCardName"
+        :categories="categories"
         :is-open="isOpenUpdate"
         @close-modal="isOpenUpdate = false"
+        @added-product="handleUpdateProduct"
       />
 
       <!-- Модалка на добавление -->
@@ -117,7 +124,8 @@ import { useProducts } from '~/modules/shared/composables/useProducts'
 import { useProductList } from '~/modules/shared/composables/useProductList'
 import type { Product, AddedProduct } from '~/modules/shared/types/type'
 
-const { getProductById, deleteProduct, addedProduct } = useProducts()
+const { getProductById, deleteProduct, addedProduct, updateProduct } =
+  useProducts()
 const {
   categories,
   searchProducts,
@@ -136,6 +144,8 @@ definePageMeta({
   layout: 'custom'
 })
 
+const loadingStates = ref<Record<number, boolean>>({})
+
 const isOpenDelete = ref(false)
 const currentCardName = ref<Product>()
 
@@ -149,20 +159,27 @@ function openDeleteModal(card: Product) {
 }
 
 async function openUpdateModal(card: Product) {
-  isOpenUpdate.value = true
-  currentCardName.value = card
-
   try {
+    loadingStates.value[card.id] = true
     const response = await getProductById(card.id)
+    currentCardName.value = response
+    isOpenUpdate.value = true
     console.log(response)
   } catch (error) {
     console.error(error)
+  } finally {
+    loadingStates.value[card.id] = false
   }
 }
 
 async function handleDeleteProduct(id: number) {
   await Promise.all([deleteProduct(id), fetchInitialData()])
   isOpenDelete.value = false
+}
+
+async function handleUpdateProduct(productData: AddedProduct, id: number) {
+  await Promise.all([updateProduct(productData, id), fetchInitialData()])
+  isOpenUpdate.value = false
 }
 
 async function handleAddedProduct(productData: AddedProduct) {

@@ -73,6 +73,8 @@ const props = defineProps<{
   cardProduct: Product
 }>()
 
+console.log('Дочерний удаление', props.cardProduct)
+
 const emit = defineEmits<{
   (e: 'closeModal'): void
   (e: 'deleteProduct', id: number): void

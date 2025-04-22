@@ -1,10 +1,6 @@
 <template>
   <div class="mr-6 space-y-6">
-    <div
-      v-for="order in orders"
-      :key="order.id"
-      class="rounded-xl border p-4 shadow-md"
-    >
+    <div class="rounded-xl border p-4 shadow-md">
       <div
         class="mb-2 flex flex-col md:flex-row md:items-center md:justify-between"
       >
@@ -50,38 +46,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { Order } from '~/modules/shared/types/type'
 
-const orders = ref([
-  {
-    id: 1,
-    createdAt: '2025-04-10 11:18:31',
-    status: 'new',
-    phone: '+79991234567',
-    totalQuantity: 3,
-    totalAmount: 6330,
-    userId: 5,
-    userEmail: 'igor@mail.ru',
-    userName: 'Игорь Вихорьков',
-    items: [
-      {
-        id: 1,
-        productId: 1,
-        productName: 'Икра Чёрная',
-        quantity: 2,
-        price: 2600,
-        total: 5200
-      },
-      {
-        id: 2,
-        productId: 3,
-        productName: 'Икра товар 3',
-        quantity: 1,
-        price: 1130,
-        total: 1130
-      }
-    ]
-  }
-  // Можешь добавить ещё mock-заказы сюда
-])
+defineProps<{
+  order: Order
+}>()
 </script>

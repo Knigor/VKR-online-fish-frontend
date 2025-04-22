@@ -9,12 +9,11 @@
       <p class="text-2xl">Ошибка загрузки товара</p>
     </div>
 
-    <!-- Отзывы покупателей-->
-    <p class="text-2xl">Отзывы покупателей</p>
-
     <div
       class="scrollbar-thumb-gray-600 scrollbar-thin scrollbar-track-gray-300 flex h-[600px] flex-col items-start overflow-auto"
     >
+      <!-- Отзывы покупателей-->
+      <p class="text-2xl">Отзывы покупателей</p>
       <ReviewRating
         v-for="item in review"
         :key="item.id"

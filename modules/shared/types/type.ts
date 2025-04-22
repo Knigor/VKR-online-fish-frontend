@@ -41,3 +41,25 @@ export interface Review {
   is_moderate: boolean
   moderation_status: string
 }
+
+export interface OrderItems {
+  id: number
+  productId: number
+  productName: string
+  quantity: number
+  price: number
+  total: number
+}
+
+export interface Order {
+  id: number
+  createdAt: string
+  status: string
+  phone: string
+  totalQuantity: number
+  totalAmount: number
+  userId: number
+  userEmail: string
+  userName: string
+  items: OrderItems[]
+}

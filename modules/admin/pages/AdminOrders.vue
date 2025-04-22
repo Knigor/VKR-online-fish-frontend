@@ -8,7 +8,6 @@
           type="search"
           placeholder="Поиск"
         />
-        <button class="btn join-item btn-xs rounded-r-full">Найти</button>
       </div>
 
       <select class="select select-xs border-1">
@@ -23,19 +22,33 @@
     <div
       class="scrollbar-thumb-gray-600 scrollbar-thin scrollbar-track-gray-300 grid h-[600px] max-w-[900px] gap-4 overflow-auto lg:grid-cols-2"
     >
-      <OrdersAdmin />
-      <OrdersAdmin />
-      <OrdersAdmin />
-      <OrdersAdmin />
+      <OrdersAdmin v-for="order in orders" :key="order.id" :order="order" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import OrdersAdmin from '../components/OrdersAdmin.vue'
+import { useOrders } from '~/modules/shared/composables/useOrders'
+import type { Order } from '~/modules/shared/types/type'
 
 definePageMeta({
   layout: 'custom'
+})
+
+const orders = ref<Order[]>()
+const isLoadingOrder = ref(false)
+
+const { getOrders } = useOrders()
+
+onMounted(async () => {
+  isLoadingOrder.value = true
+  try {
+    const response = await getOrders()
+    orders.value = response
+  } catch (error) {
+    console.error(error)
+  }
 })
 </script>
 

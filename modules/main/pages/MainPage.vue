@@ -75,7 +75,7 @@
       >
         <figure class="">
           <img
-            src="https://optim.tildacdn.com/tild3633-6536-4365-b461-386262313565/-/format/webp/4_3_23.jpg"
+            :src="card.imageUrlProduct"
             alt="Shoes"
             class="rounded-xl rounded-b-none"
           />

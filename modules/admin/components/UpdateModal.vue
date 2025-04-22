@@ -39,22 +39,42 @@
                 >
                   <X stroke-width="1" />
                 </button>
-                Редактировать {{ cardProduct.nameProduct }}
+                Редактирование товара {{ product.nameProduct }}
               </DialogTitle>
               <div class="mt-2">
-                <p class="text-sm text-gray-500">Редактирование</p>
+                <p class="text-sm text-gray-500">Отредактируйте поля</p>
               </div>
 
-              <form class="mt-4 space-y-4">
+              <form class="mt-4 space-y-4" @submit.prevent>
                 <div>
                   <label class="block text-sm font-medium text-gray-700">
                     Название продукта
                   </label>
                   <input
+                    v-model="nameProduct"
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Название продукта"
                     class="input input-primary mt-2 border"
                   />
+                </div>
+
+                <!-- Категория из селекта -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">
+                    Категория
+                  </label>
+                  <select
+                    v-model="selectedCategory"
+                    class="select select-primary mt-2 border"
+                  >
+                    <option
+                      v-for="category in categories"
+                      :key="category.id"
+                      :value="category.id"
+                    >
+                      {{ category.name }}
+                    </option>
+                  </select>
                 </div>
 
                 <div>
@@ -62,9 +82,10 @@
                     Описание продукта
                   </label>
                   <textarea
+                    v-model="descriptionProduct"
                     type="text"
-                    placeholder="Primary"
-                    class="textarea textarea-primary max-h-12 border"
+                    placeholder="Описание продукта"
+                    class="textarea textarea-primary mt-2 max-h-12 border"
                   ></textarea>
                 </div>
 
@@ -73,27 +94,19 @@
                     Цена
                   </label>
                   <input
+                    v-model="priceProduct"
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Цена"
                     class="input input-primary mt-2 border"
                   />
                 </div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700">
-                    Количество
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Type here"
-                    class="input input-primary mt-2 border"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">
                     Тип продукта
                   </label>
                   <input
+                    v-model="typeProducts"
                     type="text"
                     placeholder="Охлажденная"
                     class="input input-primary mt-2 border"
@@ -105,6 +118,7 @@
                     Вес продукта
                   </label>
                   <input
+                    v-model="productWeight"
                     type="text"
                     placeholder="50 г"
                     class="input input-primary mt-2 border"
@@ -116,6 +130,7 @@
                     Кол-во товара на складе
                   </label>
                   <input
+                    v-model="quantityProduct"
                     type="text"
                     placeholder="23"
                     class="input input-primary mt-2 border"
@@ -127,6 +142,7 @@
                     Вставьте ссылку на картинку
                   </label>
                   <input
+                    v-model="imageUrl"
                     type="text"
                     placeholder="http://aboba.ru"
                     class="input input-primary mt-2 border"
@@ -134,7 +150,7 @@
                 </div>
 
                 <div class="mt-4 flex gap-4">
-                  <button class="btn btn-accent" @click="updateProduct">
+                  <button class="btn btn-accent" @click="addedProduct">
                     Обновить
                   </button>
                   <button class="btn btn-info" @click="closeModal">
@@ -159,22 +175,70 @@ import {
   DialogTitle
 } from '@headlessui/vue'
 import { X } from 'lucide-vue-next'
-import type { Product } from '~/modules/shared/types/type'
+import type { Category, Product } from '~/modules/shared/types/type'
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean
-  cardProduct: Product
+  categories: Category[]
+  product: Product
 }>()
 
-// const name = ref('')
+const nameProduct = ref(props.product.nameProduct)
+const descriptionProduct = ref(props.product.descriptionProduct)
+const priceProduct = ref(props.product.priceProduct)
+const typeProducts = ref(props.product.typeProducts)
+const productWeight = ref(props.product.productWeight)
+const quantityProduct = ref(props.product.quantityProduct)
+const imageUrl = ref(props.product.imageUrlProduct)
+const selectedCategory = ref(props.product.categoryId)
+
+watch(
+  () => props.product,
+  (newProduct) => {
+    nameProduct.value = newProduct.nameProduct
+    descriptionProduct.value = newProduct.descriptionProduct
+    priceProduct.value = newProduct.priceProduct
+    typeProducts.value = newProduct.typeProducts
+    productWeight.value = newProduct.productWeight
+    quantityProduct.value = newProduct.quantityProduct
+    imageUrl.value = newProduct.imageUrlProduct
+    selectedCategory.value = newProduct.categoryId
+  }
+)
 
 const emit = defineEmits<{
-  closeModal: []
-  updateProduct: []
+  (e: 'closeModal'): void
+  (
+    e: 'addedProduct',
+    productData: {
+      nameProduct: string
+      descriptionProduct: string
+      priceProduct: number
+      typeProducts: string
+      productWeight: string
+      quantityProduct: number
+      imageUrl: string
+      categoryId: number
+    },
+    id: number
+  ): void
 }>()
 
-function updateProduct() {
-  emit('updateProduct')
+function addedProduct() {
+  emit(
+    'addedProduct',
+    {
+      nameProduct: nameProduct.value,
+      descriptionProduct: descriptionProduct.value,
+      priceProduct: Number(priceProduct.value),
+      typeProducts: typeProducts.value,
+      productWeight: productWeight.value,
+      quantityProduct: Number(quantityProduct.value),
+      imageUrl: imageUrl.value,
+      categoryId: Number(selectedCategory.value)
+    },
+    props.product.id
+  )
 }
 
 function closeModal() {

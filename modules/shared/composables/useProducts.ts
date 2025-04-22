@@ -79,8 +79,21 @@ export const useProducts = () => {
     }
   }
 
+  const updateProduct = async (product: AddedProduct, id: number) => {
+    try {
+      const response = await $protectedApi(`products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(product) || product
+      })
+      return response
+    } catch (error) {
+      console.error('Ошибка при обновлении продукта:', error)
+    }
+  }
+
   return {
     getProductById,
+    updateProduct,
     addedProduct,
     getProducts,
     getProductByCategory,
