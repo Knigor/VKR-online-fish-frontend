@@ -27,13 +27,14 @@
             leave-to="opacity-0 scale-95"
           >
             <DialogPanel
+              tabindex="0"
               class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
             >
               <DialogTitle
                 as="h3"
                 class="text-lg leading-6 font-medium text-gray-900"
               >
-                Удалить продукт {{ cardProduct.name }}
+                Удалить продукт {{ cardProduct.nameProduct }}
               </DialogTitle>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
@@ -65,26 +66,20 @@ import {
   DialogPanel,
   DialogTitle
 } from '@headlessui/vue'
+import type { Product } from '~/modules/shared/types/type'
 
-interface Card {
-  id: number
-  descriptionProduct: string
-  name: string
-  price: number
-}
-
-defineProps<{
+const props = defineProps<{
   isOpen: boolean
-  cardProduct: Card
+  cardProduct: Product
 }>()
 
 const emit = defineEmits<{
-  closeModal: []
-  deleteProduct: []
+  (e: 'closeModal'): void
+  (e: 'deleteProduct', id: number): void
 }>()
 
 function deleteProduct() {
-  emit('deleteProduct')
+  emit('deleteProduct', props.cardProduct.id)
 }
 
 function closeModal() {

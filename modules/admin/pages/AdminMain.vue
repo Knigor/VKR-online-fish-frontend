@@ -6,6 +6,7 @@
     <div class="mr-4 flex w-full max-w-[900px] justify-end gap-2">
       <div class="join">
         <input
+          v-model="searchProducts"
           class="input join-item input-xs border-1"
           type="search"
           placeholder="Поиск"
@@ -13,10 +14,14 @@
         <button class="btn join-item btn-xs rounded-r-full">Найти</button>
       </div>
 
-      <select class="select select-xs border-1">
-        <option selected>Порядок: по умолчанию</option>
-        <option>Цена: По возрастанию</option>
-        <option>Цена: По убыванию</option>
+      <select
+        v-model="selectedSort"
+        class="select select-xs border-1"
+        @change="handleSort(selectedSort)"
+      >
+        <option value="DEFAULT">Порядок: по умолчанию</option>
+        <option value="price_asc">Цена: По возрастанию</option>
+        <option value="price_desc">Цена: По убыванию</option>
       </select>
     </div>
 
@@ -37,22 +42,22 @@
       class="mx-auto grid max-w-[900px] grid-cols-1 gap-6 px-4 sm:grid-cols-2 lg:grid-cols-3"
     >
       <div
-        v-for="card in cards"
+        v-for="card in filteredProducts"
         :key="card.id"
         class="card w-full border-blue-600 shadow-sm"
       >
         <figure class="">
           <img
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+            :src="card.imageUrlProduct"
             alt="Shoes"
             class="rounded-xl rounded-b-none"
           />
         </figure>
         <div class="card-body rounded-t-none">
           <h2 class="card-title">
-            {{ card.name }}
+            {{ card.nameProduct }}
             <div class="badge badge-secondary p-2">
-              {{ new Intl.NumberFormat('ru-RU').format(card.price) }}р
+              {{ new Intl.NumberFormat('ru-RU').format(card.priceProduct) }}р
             </div>
           </h2>
           <p>
@@ -70,33 +75,36 @@
               Редактировать
             </button>
           </div>
-
-          <!-- Модалка на удаление -->
-
-          <DeleteModal
-            v-if="currentCardName"
-            :card-product="currentCardName"
-            :is-open="isOpenDelete"
-            @close-modal="isOpenDelete = false"
-          />
-
-          <!-- Модалка на редактирование -->
-          <UpdateModal
-            v-if="currentCardName"
-            :card-product="currentCardName"
-            :is-open="isOpenUpdate"
-            @close-modal="isOpenUpdate = false"
-          />
-
-          <!-- Модалка на добавление -->
-
-          <AddedModal
-            :is-open="isOpenAdded"
-            :categories="categories"
-            @close-modal="isOpenAdded = false"
-          />
         </div>
       </div>
+
+      <!-- Модалка на удаление -->
+
+      <!-- Модалка на редактирование -->
+      <UpdateModal
+        v-if="currentCardName"
+        :card-product="currentCardName"
+        :is-open="isOpenUpdate"
+        @close-modal="isOpenUpdate = false"
+      />
+
+      <!-- Модалка на добавление -->
+
+      <AddedModal
+        :is-open="isOpenAdded"
+        :categories="categories"
+        @close-modal="isOpenAdded = false"
+        @added-product="handleAddedProduct"
+      />
+
+      <!-- Удаление компонента -->
+      <DeleteModal
+        v-if="currentCardName"
+        :card-product="currentCardName"
+        :is-open="isOpenDelete"
+        @close-modal="isOpenDelete = false"
+        @delete-product="handleDeleteProduct"
+      />
     </div>
   </div>
 </template>
@@ -105,47 +113,42 @@
 import DeleteModal from '../components/DeleteModal.vue'
 import UpdateModal from '../components/UpdateModal.vue'
 import AddedModal from '../components/AddedModal.vue'
-import { useCategory } from '~/modules/main/composables/useCategory'
-import type { Category } from '~/modules/shared/types/type'
 import { useProducts } from '~/modules/shared/composables/useProducts'
-const { getCategories } = useCategory()
-const { getProductById } = useProducts()
+import { useProductList } from '~/modules/shared/composables/useProductList'
+import type { Product, AddedProduct } from '~/modules/shared/types/type'
 
-const categories = ref<Category[]>([])
+const { getProductById, deleteProduct, addedProduct } = useProducts()
+const {
+  categories,
+  searchProducts,
+  selectedSort,
+  filteredProducts,
+  fetchInitialData,
+  handleSort,
+  truncate
+} = useProductList()
 
-onMounted(async () => {
-  try {
-    const response = await getCategories()
-    categories.value = response
-  } catch (error) {
-    console.error(error)
-  }
+onMounted(() => {
+  fetchInitialData()
 })
-
-interface Card {
-  id: number
-  descriptionProduct: string
-  name: string
-  price: number
-}
 
 definePageMeta({
   layout: 'custom'
 })
 
 const isOpenDelete = ref(false)
-const currentCardName = ref<Card>()
+const currentCardName = ref<Product>()
 
 const isOpenUpdate = ref(false)
 
 const isOpenAdded = ref(false)
 
-function openDeleteModal(card: Card) {
+function openDeleteModal(card: Product) {
   isOpenDelete.value = true
   currentCardName.value = card
 }
 
-async function openUpdateModal(card: Card) {
+async function openUpdateModal(card: Product) {
   isOpenUpdate.value = true
   currentCardName.value = card
 
@@ -157,40 +160,18 @@ async function openUpdateModal(card: Card) {
   }
 }
 
-function openAddedModal() {
-  isOpenAdded.value = true
+async function handleDeleteProduct(id: number) {
+  await Promise.all([deleteProduct(id), fetchInitialData()])
+  isOpenDelete.value = false
 }
 
-const cards = ref([
-  {
-    id: 1,
-    descriptionProduct: 'Описание продукта 5 из категории Икра.',
-    name: 'Чёрная икра',
-    price: 100
-  },
-  {
-    id: 2,
-    descriptionProduct: 'Описание продукта 5 из категории Икра.',
-    name: 'Крабы',
-    price: 11200
-  },
-  {
-    id: 3,
-    descriptionProduct: 'Описание продукта 5 из категории Икра.',
-    name: 'Креветки норм',
-    price: 300
-  },
-  {
-    id: 4,
-    descriptionProduct:
-      'Описание продукта 5 из категории Икра. Описание продукта 5 из категории Икра. Описание продукта 5 из категории Икра. Описание продукта 5 из категории Икра.',
-    name: 'Креветки супер',
-    price: 300
-  }
-])
+async function handleAddedProduct(productData: AddedProduct) {
+  await Promise.all([addedProduct(productData), fetchInitialData()])
+  isOpenAdded.value = false
+}
 
-const truncate = (str: string) => {
-  return str.length > 40 ? str.slice(0, 60) + '...' : str
+function openAddedModal() {
+  isOpenAdded.value = true
 }
 </script>
 

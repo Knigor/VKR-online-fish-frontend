@@ -39,7 +39,7 @@
                 >
                   <X stroke-width="1" />
                 </button>
-                Редактировать {{ cardProduct.name }}
+                Редактировать {{ cardProduct.nameProduct }}
               </DialogTitle>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">Редактирование</p>
@@ -159,17 +159,11 @@ import {
   DialogTitle
 } from '@headlessui/vue'
 import { X } from 'lucide-vue-next'
-
-interface Card {
-  id: number
-  descriptionProduct: string
-  name: string
-  price: number
-}
+import type { Product } from '~/modules/shared/types/type'
 
 defineProps<{
   isOpen: boolean
-  cardProduct: Card
+  cardProduct: Product
 }>()
 
 // const name = ref('')

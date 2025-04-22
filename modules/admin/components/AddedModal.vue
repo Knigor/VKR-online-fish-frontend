@@ -45,34 +45,47 @@
                 <p class="text-sm text-gray-500">Дбоавление товара</p>
               </div>
 
-              <form class="mt-4 space-y-4">
+              <form class="mt-4 space-y-4" @submit.prevent>
                 <div>
                   <label class="block text-sm font-medium text-gray-700">
                     Название продукта
                   </label>
                   <input
+                    v-model="nameProduct"
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Название продукта"
                     class="input input-primary mt-2 border"
                   />
                 </div>
 
                 <!-- Категория из селекта -->
-
-                <select class="select select-primary border">
-                  <option v-for="category in categories" :key="category.id">
-                    {{ category.name }}
-                  </option>
-                </select>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">
+                    Категория
+                  </label>
+                  <select
+                    v-model="selectedCategory"
+                    class="select select-primary mt-2 border"
+                  >
+                    <option
+                      v-for="category in categories"
+                      :key="category.id"
+                      :value="category.id"
+                    >
+                      {{ category.name }}
+                    </option>
+                  </select>
+                </div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700">
                     Описание продукта
                   </label>
                   <textarea
+                    v-model="descriptionProduct"
                     type="text"
-                    placeholder="Primary"
-                    class="textarea textarea-primary max-h-12 border"
+                    placeholder="Описание продукта"
+                    class="textarea textarea-primary mt-2 max-h-12 border"
                   ></textarea>
                 </div>
 
@@ -81,27 +94,19 @@
                     Цена
                   </label>
                   <input
+                    v-model="priceProduct"
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Цена"
                     class="input input-primary mt-2 border"
                   />
                 </div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700">
-                    Количество
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Type here"
-                    class="input input-primary mt-2 border"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">
                     Тип продукта
                   </label>
                   <input
+                    v-model="typeProducts"
                     type="text"
                     placeholder="Охлажденная"
                     class="input input-primary mt-2 border"
@@ -113,6 +118,7 @@
                     Вес продукта
                   </label>
                   <input
+                    v-model="productWeight"
                     type="text"
                     placeholder="50 г"
                     class="input input-primary mt-2 border"
@@ -124,6 +130,7 @@
                     Кол-во товара на складе
                   </label>
                   <input
+                    v-model="quantityProduct"
                     type="text"
                     placeholder="23"
                     class="input input-primary mt-2 border"
@@ -135,6 +142,7 @@
                     Вставьте ссылку на картинку
                   </label>
                   <input
+                    v-model="imageUrl"
                     type="text"
                     placeholder="http://aboba.ru"
                     class="input input-primary mt-2 border"
@@ -174,13 +182,43 @@ defineProps<{
   categories: Category[]
 }>()
 
+const nameProduct = ref('')
+const descriptionProduct = ref('')
+const priceProduct = ref()
+const typeProducts = ref('')
+const productWeight = ref('100 г')
+const quantityProduct = ref()
+const imageUrl = ref('')
+const selectedCategory = ref(1)
+
 const emit = defineEmits<{
-  closeModal: []
-  addedProduct: []
+  (e: 'closeModal'): void
+  (
+    e: 'addedProduct',
+    productData: {
+      nameProduct: string
+      descriptionProduct: string
+      priceProduct: number
+      typeProducts: string
+      productWeight: string
+      quantityProduct: number
+      imageUrl: string
+      categoryId: number
+    }
+  ): void
 }>()
 
 function addedProduct() {
-  emit('addedProduct')
+  emit('addedProduct', {
+    nameProduct: nameProduct.value,
+    descriptionProduct: descriptionProduct.value,
+    priceProduct: Number(priceProduct.value),
+    typeProducts: typeProducts.value,
+    productWeight: productWeight.value,
+    quantityProduct: Number(quantityProduct.value),
+    imageUrl: imageUrl.value,
+    categoryId: Number(selectedCategory.value)
+  })
 }
 
 function closeModal() {

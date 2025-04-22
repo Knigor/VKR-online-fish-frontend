@@ -15,9 +15,6 @@
             Большой ассортимент красной и черной икры, икры щуки, рыбы, устриц и
             многое другое, переходите в каталог
           </p>
-          <!-- <button class="btn btn-primary" @click="selectedCategory = 'Все'">
-            Просмотр продукции
-          </button> -->
         </div>
       </div>
     </div>
@@ -125,107 +122,29 @@
 </template>
 
 <script setup lang="ts">
-import type { Product, Category } from '~/modules/shared/types/type'
-import { useProducts } from '~/modules/shared/composables/useProducts'
-import { useCategory } from '../composables/useCategory'
+import { useProductList } from '~/modules/shared/composables/useProductList'
 import { X } from 'lucide-vue-next'
 definePageMeta({
-  layout: 'custom',
-  keepalive: true
+  layout: 'custom'
 })
 
-const selectedCategory = ref('')
-
-const { getProducts, getProductByCategory, getProductsSort } = useProducts()
-const { getCategories } = useCategory()
-const cardsProduct = ref<Product[]>([])
-const categories = ref<Category[]>([])
-const isLoadingProducts = ref(false)
-const selectedSort = ref('DEFAULT')
-
-console.log(selectedSort.value)
+const {
+  categories,
+  isLoadingProducts,
+  selectedCategory,
+  searchProducts,
+  selectedSort,
+  filteredProducts,
+  fetchInitialData,
+  handleReset,
+  handleCategoryFilter,
+  handleSort,
+  truncate
+} = useProductList()
 
 onMounted(async () => {
-  isLoadingProducts.value = true
-  try {
-    await Promise.all([getCategories(), getProducts()]).then(
-      ([category, products]) => {
-        categories.value = category
-        cardsProduct.value = products
-      }
-    )
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isLoadingProducts.value = false
-  }
+  await fetchInitialData()
 })
-
-const handleReset = async () => {
-  selectedCategory.value = ''
-  isLoadingProducts.value = true
-  try {
-    const response = await getProducts()
-    cardsProduct.value = response
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isLoadingProducts.value = false
-  }
-}
-const searchProducts = ref('')
-const handleCategoryFilter = async (category: Category) => {
-  console.log('Кликл Фильтр')
-  selectedCategory.value = category.name
-  isLoadingProducts.value = true
-  searchProducts.value = ''
-  try {
-    const response = await getProductByCategory(category.id)
-    cardsProduct.value = response
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isLoadingProducts.value = false
-  }
-}
-
-const filteredProducts = computed(() => {
-  return cardsProduct.value.filter((item) => {
-    return item.nameProduct
-      .toLowerCase()
-      .includes(searchProducts.value.toLowerCase())
-  })
-})
-
-const handleSort = async (sort: string) => {
-  if (selectedSort.value === 'DEFAULT') {
-    selectedSort.value = sort
-    isLoadingProducts.value = true
-    try {
-      const response = await getProducts()
-      cardsProduct.value = response
-    } catch (error) {
-      console.error(error)
-    } finally {
-      isLoadingProducts.value = false
-    }
-  } else {
-    selectedSort.value = sort
-    isLoadingProducts.value = true
-    try {
-      const response = await getProductsSort(sort)
-      cardsProduct.value = response
-    } catch (error) {
-      console.error(error)
-    } finally {
-      isLoadingProducts.value = false
-    }
-  }
-}
-
-const truncate = (str: string) => {
-  return str.length > 40 ? str.slice(0, 60) + '...' : str
-}
 </script>
 
 <style scoped></style>

@@ -15,6 +15,17 @@ export interface Product {
   categoryId: number
 }
 
+export interface AddedProduct {
+  nameProduct: string
+  descriptionProduct: string
+  priceProduct: number
+  typeProducts: string
+  productWeight: string
+  quantityProduct: number
+  imageUrl: string
+  categoryId: number
+}
+
 export interface Review {
   id: number
   product_id: number
