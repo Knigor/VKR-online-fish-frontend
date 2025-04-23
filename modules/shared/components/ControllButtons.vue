@@ -20,7 +20,15 @@
 import { Minus, Plus } from 'lucide-vue-next'
 import { useControllButtons } from '../composables/useControlButtons'
 
-const { handlePlus, handleMinus, handleInput, quantity } = useControllButtons()
+const emit = defineEmits<{
+  (e: 'update:quantity', value: number): void
+}>()
+
+const { handlePlus, handleMinus, handleInput, quantity } = useControllButtons(
+  (newValue: number) => {
+    emit('update:quantity', newValue)
+  }
+)
 </script>
 
 <style scoped></style>

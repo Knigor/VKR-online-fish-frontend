@@ -18,11 +18,8 @@
           </p>
 
           <div class="flex gap-2 py-2">
-            <ControllButtons />
-            <button
-              class="btn btn-primary"
-              @click="() => $toast.success('Товар успешно добавлен в корзину')"
-            >
+            <ControllButtons @update:quantity="handleQuantity" />
+            <button class="btn btn-primary" @click="handleAddedCart(product)">
               Добавить в корзину
             </button>
             <button class="btn btn-info" @click="handleOpenReview">
@@ -54,16 +51,41 @@ import ReviewProduct from './ReviewProduct.vue'
 import type { Product } from '~/modules/shared/types/type'
 import { useReviews } from '~/modules/shared/composables/useReviews'
 import { useAuthStore } from '~/modules/auth/store/authStore'
+import { useCartStore } from '~/modules/shared/store/cartStore'
 
 defineProps<{
   product: Product
 }>()
 
+const cartStore = useCartStore()
 const { $toast } = useNuxtApp()
 const { addedReview } = useReviews()
 const isOpen = ref(false)
 const route = useRoute()
 const authStore = useAuthStore()
+
+const currentQuantity = ref(1)
+
+const handleAddedCart = (product: Product) => {
+  console.log(
+    product.id,
+    product.nameProduct,
+    currentQuantity.value,
+    product.priceProduct
+  )
+  $toast.success('Товар добавлен в корзину')
+  cartStore.addItem(
+    product.id,
+    currentQuantity.value,
+    product.priceProduct,
+    product.nameProduct,
+    product.imageUrlProduct
+  )
+}
+
+const handleQuantity = (quantity: number) => {
+  currentQuantity.value = quantity
+}
 
 const handleAddedReview = async (rating: number, text: string) => {
   try {

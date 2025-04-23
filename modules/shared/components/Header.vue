@@ -64,7 +64,11 @@
       <div class="dropdown dropdown-end flex gap-2">
         <!-- Иконка корзины -->
         <div
-          class="tooltip tooltip-primary hover:tooltip-open tooltip-bottom"
+          :class="
+            cartStore.isEmpty
+              ? 'tooltip-disabled'
+              : 'tooltip tooltip-primary hover:tooltip-open tooltip-bottom'
+          "
           data-tip="Открыть"
         >
           <div
@@ -74,7 +78,9 @@
           >
             <div class="indicator">
               <ShoppingCart />
-              <span class="badge badge-sm indicator-item">1</span>
+              <span class="badge badge-sm indicator-item">{{
+                cartStore.totalItems
+              }}</span>
             </div>
           </div>
         </div>
@@ -147,6 +153,7 @@ import {
 } from 'lucide-vue-next'
 import CartModal from './CartModal.vue'
 import { useSearchHeader } from '../composables/useSearchHeader'
+import { useCartStore } from '../store/cartStore'
 
 interface Product {
   id: number
@@ -159,6 +166,7 @@ interface Product {
   typeProducts: string
 }
 
+const cartStore = useCartStore()
 const search = ref<string>('')
 const isOpen = defineModel<boolean>('isOpen')
 const userRole = defineModel<string>('userRole')

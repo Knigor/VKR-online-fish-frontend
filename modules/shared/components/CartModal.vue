@@ -43,27 +43,42 @@
               </DialogTitle>
 
               <hr class="mt-4" />
-              <div class="mt-2 mb-2">
+              <div class="mt-2 mb-2 flex flex-col gap-4">
                 <!-- Карточки товаров в корзине -->
-                <ul class="list bg-base-100 rounded-box shadow-md">
+                <p v-if="cartStore.isEmpty" class="py-12 text-center text-2xl">
+                  Сейчас здесь пусто. Добавьте товар в корзину
+                </p>
+
+                <ul
+                  v-for="item in cartStore.items"
+                  :key="item.productId"
+                  class="list bg-base-100 rounded-box shadow-md"
+                >
                   <li class="list-row items-center">
                     <div>
-                      <img
-                        class="rounded-box size-25"
-                        src="https://static.tildacdn.com/stor6565-3463-4632-a133-646663663863/42978652.jpg"
-                      />
+                      <img class="rounded-box size-25" :src="item.imgUrl" />
                     </div>
                     <div>
-                      <div class="mt-1">Живые устрицы товар 1</div>
+                      <div class="mt-1">{{ item.name }}</div>
                     </div>
 
-                    <ControllButtons />
+                    <ControllButtonsCart
+                      v-model:quantity="item.quantity"
+                      :product-id="item.productId"
+                    />
                     <p class="inline-block w-24 text-end text-gray-600">
-                      {{ new Intl.NumberFormat('ru-RU').format(priceProduct) }}
+                      {{
+                        new Intl.NumberFormat('ru-RU').format(
+                          item.price * item.quantity
+                        )
+                      }}
                       р.
                     </p>
 
-                    <button class="btn btn-square btn-ghost">
+                    <button
+                      class="btn btn-square btn-ghost"
+                      @click="handleDeleteItem(item.productId)"
+                    >
                       <X stroke-width="1" />
                     </button>
                   </li>
@@ -72,7 +87,13 @@
 
               <hr class="" />
 
-              <p class="mt-4 mb-4 text-end">Сумма: <span>14 888</span> р.</p>
+              <p class="mt-4 mb-4 text-end">
+                Сумма:
+                <span>{{
+                  new Intl.NumberFormat('ru-RU').format(cartStore.totalPrice)
+                }}</span>
+                р.
+              </p>
 
               <hr class="" />
 
@@ -127,13 +148,18 @@ import {
 } from '@headlessui/vue'
 import { useAuthStore } from '~/modules/auth/store/authStore'
 import { X } from 'lucide-vue-next'
-import ControllButtons from './ControllButtons.vue'
-import { useControllButtons } from '../composables/useControlButtons'
+import ControllButtonsCart from './ControllButtonsCart.vue'
+import { useCartStore } from '../store/cartStore'
 
-const { priceProduct } = useControllButtons()
+const cartStore = useCartStore()
+
 const authStore = useAuthStore()
 const isOpen = defineModel<boolean>('isOpen')
 function closeModal() {
   isOpen.value = false
+}
+
+function handleDeleteItem(id: number) {
+  cartStore.removeItem(id)
 }
 </script>
