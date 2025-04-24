@@ -80,6 +80,6 @@ export const useCartStore = defineStore('cart', {
       return state.items?.some((item) => item.productId === productId) || false
     },
     // проверка на пустоту
-    isEmpty: (state) => state.items === null
+    isEmpty: (state) => state.items?.length === 0 || state.items === null
   }
 })

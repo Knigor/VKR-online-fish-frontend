@@ -64,6 +64,7 @@
       <div class="dropdown dropdown-end flex gap-2">
         <!-- Иконка корзины -->
         <div
+          v-if="!cartStore.isEmpty"
           :class="
             cartStore.isEmpty
               ? 'tooltip-disabled'

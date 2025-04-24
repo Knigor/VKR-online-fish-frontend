@@ -125,7 +125,8 @@
                 <button
                   type="button"
                   class="btn btn-primary btn-block"
-                  @click="closeModal"
+                  :disabled="cartStore.isEmpty"
+                  @click="handleAddedOrder"
                 >
                   Оформить заказ
                 </button>
@@ -150,10 +151,25 @@ import { useAuthStore } from '~/modules/auth/store/authStore'
 import { X } from 'lucide-vue-next'
 import ControllButtonsCart from './ControllButtonsCart.vue'
 import { useCartStore } from '../store/cartStore'
+import { useOrders } from '../composables/useOrders'
+
+interface CartItem {
+  productId: number
+  quantity: number
+  price: number
+  name: string
+  imgUrl: string
+}
+
+interface CartState {
+  items: CartItem[] | null
+}
 
 const cartStore = useCartStore()
-
 const authStore = useAuthStore()
+const { addedOrder } = useOrders()
+const { $toast } = useNuxtApp()
+
 const isOpen = defineModel<boolean>('isOpen')
 function closeModal() {
   isOpen.value = false
@@ -161,5 +177,20 @@ function closeModal() {
 
 function handleDeleteItem(id: number) {
   cartStore.removeItem(id)
+}
+
+async function handleAddedOrder() {
+  if (cartStore.items === null) return
+  try {
+    const cartStates: CartState[] = [{ items: cartStore.items }]
+    await addedOrder(authStore.user!.id, authStore.user!.phone, cartStates)
+    cartStore.clearCart()
+    isOpen.value = false
+    $toast.success(
+      'Заказ успешно оформлен, ожидайте когда с вами свяжется администратор'
+    )
+  } catch (error) {
+    console.log(error)
+  }
 }
 </script>

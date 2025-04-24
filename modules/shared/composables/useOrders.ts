@@ -1,4 +1,15 @@
 import type { $Fetch } from 'ofetch'
+interface CartItem {
+  productId: number
+  quantity: number
+  price: number
+  name: string
+  imgUrl: string
+}
+
+interface CartState {
+  items: CartItem[] | null
+}
 
 export const useOrders = () => {
   const { $protectedApi } = useNuxtApp() as unknown as { $protectedApi: $Fetch }
@@ -36,5 +47,32 @@ export const useOrders = () => {
     }
   }
 
-  return { getOrders, deleteOrder, updateOrder }
+  const addedOrder = async (
+    userId: number,
+    phone: string,
+    cartStates: CartState[]
+  ) => {
+    // достаем productId и quantity
+    const items = cartStates.flatMap(
+      (cartState) =>
+        cartState.items?.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity
+        })) || []
+    )
+
+    const order = { userId, phoneOrder: phone, items }
+
+    try {
+      const response = await $protectedApi('orders/', {
+        method: 'POST',
+        body: JSON.stringify(order) || order
+      })
+      return response
+    } catch (error) {
+      console.error('Ошибка при добавлении заказа:', error)
+    }
+  }
+
+  return { getOrders, deleteOrder, updateOrder, addedOrder }
 }
